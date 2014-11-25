@@ -39,21 +39,63 @@
         } else {
             top = index * 100 + '%';
         }
-        return '<div class="ipage" style="width:100%;height:100%;position:absolute;left:'+ left + ';top:'+ top +'">' + content + '</div>';
+        return '<div class="ipage" data-index="'+ index +'" style="width:100%;height:100%;position:absolute;left:'+ left + ';top:'+ top +'">' + content + '</div>';
 
     };
     ipage.prototype.eventBind = function(first_argument) {
         // body...
-        document.addEventListener('touchstart', function(e) {
+        var self = this;
+        
+        var pages = $('.ipage'); //return NodeList
+        console.log(pages);
+        var length = pages.length;
+        var page;
+        for (var i = 0; i < length ; i++) {
+            page = pages[i];
+            self.bindPage(page);
+        };
+    };
+    ipage.prototype.bindPage = function(page) {
+        // body...
+        var self = this;
+        page.addEventListener('touchstart', function(e) {
             console.log('touchstart');
         });
-        document.addEventListener('touchmove', function(e) {
+        page.addEventListener('touchmove', function(e) {
             console.log('touchmove');
         });
-        document.addEventListener('touchend', function (e) {
+        page.addEventListener('touchend', function (e) {
             console.log('touchend');
-
+            var target = this;
+            var index = target.getAttribute('data-index');
+            console.log(index);
+            self.changePage(target);
         });
+    };
+    ipage.prototype.changePage = function(page) {
+        // body...
+        var self = this;
+        var type = 'slide';
+        if(type === 'slide'){
+            self.slide(page);
+        }
+    };
+    ipage.prototype.slide = function(page) {
+        // body...
+        var self = this;
+        var direction = self.direction || 'horizon';
+        var nextPage = page.nextSibling;
+        if (direction === 'horizon') {
+            page.style.webkitTransition = 'all 500ms';
+            page.style.left = '-100%';
+            nextPage.style.webkitTransition = 'all 500ms';
+            nextPage.style.left = '0';
+        } else {
+            page.style.webkitTransition = 'all 500ms';
+            page.style.top = '-100%';
+            nextPage.style.webkitTransition = 'all 500ms';
+            nextPage.style.top = '0';
+        }
     };
     window.ipage = ipage;
 })(this);
